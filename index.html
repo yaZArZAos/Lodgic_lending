@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lodgic — умное ценообразование для посуточной аренды Москвы</title>
+<meta name="description" content="AI-сервис для посуточной аренды: за 2 секунды скажет, по какой цене сдавать квартиру, чтобы не терять деньги. Работает на реальных данных Avito. 50+ районов Москвы.">
+
+<meta property="og:title" content="Lodgic — умное ценообразование для посуточной аренды">
+<meta property="og:description" content="AI-сервис для посуточной аренды Москвы. 50+ районов. Бесплатно попробовать.">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-family='Georgia,serif' font-size='56' fill='%23fff' text-anchor='middle' font-weight='bold'%3ELG%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-soft: #131313;
+    --bg-card: #1a1a1a;
+    --border: #262626;
+    --text: #f5f5f5;
+    --text-dim: #a3a3a3;
+    --text-mute: #737373;
+    --accent: #d4af37;
+    --accent-soft: rgba(212, 175, 55, 0.12);
+    --accent-hover: #e6c355;
+    --radius: 14px;
+    --radius-lg: 20px;
+    --max-width: 1120px;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--accent-hover); }
+  .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 14px 0;
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.5px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: #fff; border-radius: 8px;
+    display: grid; place-items: center;
+    color: #0a0a0a;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 18px; letter-spacing: -1px;
+  }
+  .nav-links { display: flex; gap: 28px; list-style: none; font-size: 15px; }
+  .nav-links a { color: var(--text-dim); }
+  .nav-links a:hover { color: var(--text); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 22px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.2s ease; font-family: inherit; text-align: center;
+  }
+  .btn-primary { background: var(--accent); color: #0a0a0a; }
+  .btn-primary:hover {
+    background: var(--accent-hover); color: #0a0a0a;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.25);
+  }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg-card); color: var(--text); border-color: #404040; }
+  .btn-lg { padding: 16px 32px; font-size: 16px; border-radius: var(--radius-lg); }
+  .btn-sm { padding: 9px 16px; font-size: 14px; }
+
+  .menu-toggle {
+    display: none; background: none; border: none;
+    color: var(--text); font-size: 24px; cursor: pointer; padding: 4px 8px;
+  }
+
+  .hero { padding: 140px 0 100px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ''; position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    display: grid; grid-template-columns: 1.2fr 1fr;
+    gap: 60px; align-items: center;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 999px;
+    font-size: 13px; color: var(--accent); font-weight: 500;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 5vw, 56px);
+    line-height: 1.1; font-weight: 700;
+    letter-spacing: -1px; margin-bottom: 24px;
+  }
+  h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-size: 19px; color: var(--text-dim);
+    margin-bottom: 36px; max-width: 540px; line-height: 1.55;
+  }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-logo { display: grid; place-items: center; }
+  .hero-logo-mark {
+    width: 100%; max-width: 340px; aspect-ratio: 1;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .hero-logo-mark::after {
+    content: ''; position: absolute; inset: -1px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), transparent 50%);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    padding: 1px; pointer-events: none;
+  }
+  .hero-logo-letter {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: clamp(120px, 20vw, 200px);
+    color: #fff; letter-spacing: -8px; line-height: 1;
+    position: relative;
+  }
+  .hero-logo-letter::after {
+    content: ''; position: absolute;
+    right: -8%; bottom: 12%;
+    width: 22%; aspect-ratio: 1;
+    background: var(--accent); border-radius: 50%;
+  }
+
+  section { padding: 90px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.5vw, 42px);
+    font-weight: 700; letter-spacing: -0.5px;
+    margin-bottom: 16px; text-align: center;
+  }
+  .section-sub {
+    font-size: 17px; color: var(--text-dim);
+    text-align: center; max-width: 620px;
+    margin: 0 auto 60px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  .step {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 22px; text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .step:hover { transform: translateY(-4px); border-color: rgba(212, 175, 55, 0.4); }
+  .step-num {
+    display: inline-flex; width: 32px; height: 32px;
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 50%; font-size: 14px; font-weight: 700;
+    align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .step-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+  .step-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .step-desc { font-size: 13px; color: var(--text-mute); line-height: 1.5; }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .feature {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+  .feature:hover { border-color: rgba(212, 175, 55, 0.35); }
+  .feature-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+  .feature-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+  .feature-desc { font-size: 14px; color: var(--text-dim); line-height: 1.55; }
+
+  .pricing {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px; margin-top: 20px;
+  }
+  .price-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 26px;
+    display: flex; flex-direction: column;
+    position: relative;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .price-card:hover { transform: translateY(-4px); border-color: rgba(212, 175, 55, 0.4); }
+  .price-card.featured {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.06), var(--bg-soft));
+  }
+  .price-tag {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #0a0a0a;
+    font-size: 11px; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .price-name {
+    font-size: 14px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .price-amount {
+    font-family: var(--font-display);
+    font-size: 42px; font-weight: 700;
+    letter-spacing: -1px; line-height: 1;
+    margin-bottom: 8px;
+  }
+  .price-amount .currency { font-size: 24px; color: var(--text-dim); }
+  .price-note { font-size: 13px; color: var(--text-mute); margin-bottom: 24px; min-height: 20px; }
+  .price-note .save { color: var(--accent); font-weight: 600; }
+  .price-features { list-style: none; margin-bottom: 28px; flex: 1; }
+  .price-features li {
+    font-size: 14px; color: var(--text-dim);
+    padding: 7px 0; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .price-features li::before {
+    content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0;
+  }
+  .price-card .btn { width: 100%; }
+  .pricing-note {
+    text-align: center; font-size: 14px;
+    color: var(--text-mute); margin-top: 32px; line-height: 1.7;
+  }
+
+  .faq-list { max-width: 760px; margin: 0 auto; }
+  details {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0; margin-bottom: 12px;
+    overflow: hidden; transition: border-color 0.2s;
+  }
+  details[open] { border-color: rgba(212, 175, 55, 0.35); }
+  summary {
+    cursor: pointer; padding: 20px 24px;
+    font-weight: 600; font-size: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    list-style: none; user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '+'; font-size: 22px; color: var(--accent);
+    font-weight: 400; transition: transform 0.2s;
+    flex-shrink: 0; margin-left: 16px;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+  .faq-answer {
+    padding: 0 24px 22px;
+    color: var(--text-dim); font-size: 15px; line-height: 1.65;
+  }
+
+  .cta-final {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 60px 40px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cta-final::before {
+    content: ''; position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-final > * { position: relative; }
+  .cta-final h2 {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 700; letter-spacing: -0.5px;
+    margin-bottom: 14px;
+  }
+  .cta-final p {
+    color: var(--text-dim); font-size: 17px;
+    margin-bottom: 30px; max-width: 520px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0 32px;
+    color: var(--text-mute); font-size: 14px;
+  }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 24px; flex-wrap: wrap;
+  }
+  .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+  .footer-links a { color: var(--text-mute); }
+  .footer-links a:hover { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .hero-logo { order: -1; }
+    .hero-logo-mark { max-width: 220px; }
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: var(--bg-soft);
+      flex-direction: column;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+    }
+    .menu-toggle { display: block; }
+    .nav .btn-primary { display: none; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding: 110px 0 60px; }
+    section { padding: 60px 0; }
+    .container { padding: 0 18px; }
+    .cta-final { padding: 44px 24px; }
+    .price-amount { font-size: 36px; }
+    .hero-cta { flex-direction: column; }
+    .hero-cta .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="#" class="logo">
+      <span class="logo-mark">LG</span>
+      <span>Lodgic</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#how">Как работает</a></li>
+      <li><a href="#features">Возможности</a></li>
+      <li><a href="#pricing">Тарифы</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="https://t.me/LodgicBot" class="btn btn-primary btn-sm" target="_blank" rel="noopener">
+      Открыть в Telegram
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="badge">✨ AI-ценообразование для посуточной аренды</span>
+      <h1>Узнайте, по какой цене <span class="accent">сдавать квартиру</span> в Москве</h1>
+      <p class="hero-sub">
+        Lodgic анализирует реальные цены Avito, учитывает 10 факторов и за 2 секунды
+        говорит, по какой цене сдавать — чтобы не терять деньги и не отпугивать гостей.
+      </p>
+      <div class="hero-cta">
+        <a href="https://t.me/LodgicBot" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
+          🤖 Открыть в Telegram
+        </a>
+        <a href="#pricing" class="btn btn-ghost btn-lg">Посмотреть тарифы</a>
+      </div>
+    </div>
+    <div class="hero-logo">
+      <div class="hero-logo-mark">
+        <span class="hero-logo-letter">LG</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <h2 class="section-title">Как это работает</h2>
+    <p class="section-sub">5 простых шагов — и вы получите точную цену и рекомендацию, что с ней делать.</p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <span class="step-icon">📍</span>
+        <div class="step-title">Метро</div>
+        <div class="step-desc">Вводите станцию метро</div>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span class="step-icon">🏠</span>
+        <div class="step-title">Тип жилья</div>
+        <div class="step-desc">Студия, 1–3 комнаты, апартаменты</div>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span class="step-icon">📐</span>
+        <div class="step-title">Площадь</div>
+        <div class="step-desc">Указываете метры</div>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <span class="step-icon">🚶</span>
+        <div class="step-title">До метро</div>
+        <div class="step-desc">Сколько минут пешком</div>
+      </div>
+      <div class="step">
+        <span class="step-num">5</span>
+        <span class="step-icon">💰</span>
+        <div class="step-title">Ваша цена</div>
+        <div class="step-desc">Можно пропустить</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <h2 class="section-title">Что внутри</h2>
+    <p class="section-sub">Не «угадайка», а расчёт на реальных данных и рыночной аналитике.</p>
+
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">🗺</span>
+        <div class="feature-title">50+ районов Москвы</div>
+        <div class="feature-desc">От Арбата до Выхино — по каждому свои цены, спрос и конкуренция.</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Реальные цены Avito</div>
+        <div class="feature-desc">Анализ актуальных объявлений в посуточной аренде по вашему району.</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🧠</span>
+        <div class="feature-title">10 факторов в расчёте</div>
+        <div class="feature-desc">Площадь, удалённость от метро, этаж, удобства, сезонность, спрос.</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">💸</span>
+        <div class="feature-title">Упущенная выгода</div>
+        <div class="feature-desc">Показываем, сколько вы теряете в день, месяц и год, если цена занижена.</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">📈</span>
+        <div class="feature-title">Диапазон цен</div>
+        <div class="feature-desc">Минимум, рекомендуемая и максимум — чтобы видеть манёвр для торга.</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">📋</span>
+        <div class="feature-title">История оценок</div>
+        <div class="feature-desc">Все ваши запросы сохраняются, можно вернуться и сравнить.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <h2 class="section-title">Тарифы</h2>
+    <p class="section-sub">Бесплатно попробовать. Оплата разовая — без автосписаний.</p>
+
+    <div class="pricing">
+      <div class="price-card">
+        <div class="price-name">Free</div>
+        <div class="price-amount">0 <span class="currency">₽</span></div>
+        <div class="price-note">Навсегда</div>
+        <ul class="price-features">
+          <li>3 оценки</li>
+          <li>Все районы Москвы</li>
+          <li>Без регистрации</li>
+          <li>История запросов</li>
+        </ul>
+        <a href="https://t.me/LodgicBot" class="btn btn-ghost" target="_blank" rel="noopener">Попробовать</a>
+      </div>
+
+      <div class="price-card featured">
+        <span class="price-tag">Популярный</span>
+        <div class="price-name">PRO · 1 месяц</div>
+        <div class="price-amount">2 990 <span class="currency">₽</span></div>
+        <div class="price-note">разовый платёж</div>
+        <ul class="price-features">
+          <li>Безлимит оценок</li>
+          <li>Все районы Москвы</li>
+          <li>История запросов</li>
+          <li>Автоактивация</li>
+        </ul>
+        <a href="https://t.me/LodgicBot" class="btn btn-primary" target="_blank" rel="noopener">Оформить PRO</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">PRO · 3 месяца</div>
+        <div class="price-amount">7 990 <span class="currency">₽</span></div>
+        <div class="price-note"><span class="save">−11%</span> · разовый платёж</div>
+        <ul class="price-features">
+          <li>Всё из PRO</li>
+          <li>Безлимит оценок</li>
+          <li>Приоритетная поддержка</li>
+          <li>История запросов</li>
+        </ul>
+        <a href="https://t.me/LodgicBot" class="btn btn-ghost" target="_blank" rel="noopener">Оформить</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">PRO · 12 месяцев</div>
+        <div class="price-amount">29 900 <span class="currency">₽</span></div>
+        <div class="price-note"><span class="save">−17%</span> · разовый платёж</div>
+        <ul class="price-features">
+          <li>Всё из PRO</li>
+          <li>Безлимит оценок</li>
+          <li>API доступ</li>
+          <li>Максимальная выгода</li>
+        </ul>
+        <a href="https://t.me/LodgicBot" class="btn btn-ghost" target="_blank" rel="noopener">Оформить</a>
+      </div>
+    </div>
+
+    <p class="pricing-note">
+      🔒 Оплата через <strong style="color: var(--text)">Lava.top</strong> — СБП, банковские карты РФ, крипта (USDT TRC20).<br>
+      Чек приходит на email. Подписка активируется автоматически за 1–2 минуты.
+    </p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <h2 class="section-title">Частые вопросы</h2>
+    <p class="section-sub">Коротко о том, что чаще всего спрашивают.</p>
+
+    <div class="faq-list">
+      <details>
+        <summary>Это безопасно оплачивать?</summary>
+        <div class="faq-answer">
+          Да. Все платежи проходят через <strong>Lava.top</strong> — легальную платёжную платформу.
+          Мы не видим и не храним данные вашей карты. Чек приходит на email, оплата подтверждается автоматически.
+        </div>
+      </details>
+      <details>
+        <summary>Нужна ли регистрация?</summary>
+        <div class="faq-answer">
+          Нет. Достаточно открыть бота в Telegram — он сразу готов к работе. Первые 3 оценки бесплатны,
+          без привязки карты и без лишних шагов.
+        </div>
+      </details>
+      <details>
+        <summary>Можно ли оплатить криптой?</summary>
+        <div class="faq-answer">
+          Да. В боте есть оплата через <strong>USDT (TRC20)</strong>. Удобнее всего через <code>@wallet</code> в Telegram.
+          Подписка активируется вручную после подтверждения транзакции — обычно 5–10 минут.
+        </div>
+      </details>
+      <details>
+        <summary>Подписка продлится автоматически?</summary>
+        <div class="faq-answer">
+          Нет. Все платежи <strong>разовые</strong> — вы платите один раз за выбранный период.
+          Автосписаний нет. Когда срок закончится — просто оформите снова, если захотите.
+        </div>
+      </details>
+      <details>
+        <summary>Насколько точные цены?</summary>
+        <div class="faq-answer">
+          Мы считаем по реальным объявлениям Avito и рыночной аналитике по району.
+          Точность — около 80–85%. Рекомендуемую цену можно использовать как ориентир
+          и корректировать под свои условия (ремонт, фото, удобства).
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-final">
+      <h2>Готовы узнать свою цену?</h2>
+      <p>Первые 3 оценки — бесплатно. Без регистрации, без карты, за 2 секунды.</p>
+      <a href="https://t.me/LodgicBot" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
+        🤖 Открыть в Telegram
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <div>
+      <div class="logo" style="font-size: 18px; margin-bottom: 8px;">
+        <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px;">LG</span>
+        <span>Lodgic</span>
+      </div>
+      <div>© 2025 Lodgic. Умное ценообразование для посуточной аренды.</div>
+    </div>
+    <div class="footer-links">
+      <a href="offer.html">Оферта</a>
+      <a href="privacy.html">Конфиденциальность</a>
+      <a href="https://t.me/Lodgic_Ceo" target="_blank" rel="noopener">Поддержка</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Мобильное меню
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+    // Закрывать меню при клике на ссылку
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+  }
+</script>
+
+</body>
+</html>
