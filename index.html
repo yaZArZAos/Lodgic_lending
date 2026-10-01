@@ -10,26 +10,33 @@
 <meta property="og:description" content="AI-сервис для посуточной аренды Москвы. 50+ районов. Бесплатно попробовать.">
 <meta property="og:type" content="website">
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-family='Georgia,serif' font-size='56' fill='%23fff' text-anchor='middle' font-weight='bold'%3ELG%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f5f1ea'/%3E%3Ctext x='50' y='68' font-family='Georgia,serif' font-size='56' fill='%231a1815' text-anchor='middle' font-weight='bold'%3ELG%3C/text%3E%3C/svg%3E">
 
 <style>
-:root {
-  --bg: #16151a;
-  --bg-soft: #1e1d22;
-  --bg-card: #26242a;
-  --border: #33313a;
-  --text: #ece9e4;
-  --text-dim: #a9a59f;
-  --text-mute: #7a766f;
-  --accent: #c9a961;
-  --accent-soft: rgba(201, 169, 97, 0.12);
-  --accent-hover: #d9b973;
-  --radius: 14px;
-  --radius-lg: 20px;
-  --max-width: 1120px;
-  --font-display: 'Georgia', 'Times New Roman', serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
-}
+  :root {
+    --bg: #f5f1ea;
+    --bg-soft: #ffffff;
+    --bg-card: #ffffff;
+    --border: #e5ddd0;
+    --border-strong: #d4c9b5;
+    --text: #1a1815;
+    --text-dim: #5c554b;
+    --text-mute: #8a8074;
+    --accent: #d4653a;
+    --accent-soft: rgba(212, 101, 58, 0.1);
+    --accent-hover: #b85429;
+    --shadow: 0 4px 20px rgba(26, 24, 21, 0.06);
+    --shadow-lg: 0 12px 40px rgba(26, 24, 21, 0.1);
+    --radius: 14px;
+    --radius-lg: 22px;
+    --max-width: 1120px;
+    --font-display: 'Unbounded', system-ui, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -46,10 +53,11 @@
   a:hover { color: var(--accent-hover); }
   .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
+  /* ===== ШАПКА ===== */
   header {
     position: fixed;
     top: 0; left: 0; right: 0;
-    background: rgba(10, 10, 10, 0.85);
+    background: rgba(245, 241, 234, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
@@ -60,16 +68,16 @@
   .logo {
     display: flex; align-items: center; gap: 10px;
     font-family: var(--font-display);
-    font-size: 22px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text); letter-spacing: -0.5px;
   }
   .logo-mark {
     width: 36px; height: 36px;
-    background: #fff; border-radius: 8px;
+    background: var(--text); border-radius: 8px;
     display: grid; place-items: center;
-    color: #0a0a0a;
+    color: var(--bg);
     font-family: var(--font-display);
-    font-weight: 700; font-size: 18px; letter-spacing: -1px;
+    font-weight: 700; font-size: 16px; letter-spacing: -1px;
   }
   .nav-links { display: flex; gap: 28px; list-style: none; font-size: 15px; }
   .nav-links a { color: var(--text-dim); }
@@ -81,31 +89,35 @@
     font-size: 15px; font-weight: 600; border: none; cursor: pointer;
     transition: all 0.2s ease; font-family: inherit; text-align: center;
   }
-  .btn-primary { background: var(--accent); color: #0a0a0a; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    font-family: var(--font-display); font-size: 14px; letter-spacing: -0.2px;
+  }
   .btn-primary:hover {
-    background: var(--accent-hover); color: #0a0a0a;
+    background: var(--accent-hover); color: #fff;
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.25);
+    box-shadow: 0 8px 24px rgba(212, 101, 58, 0.3);
   }
   .btn-ghost {
     background: transparent; color: var(--text);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border-strong);
   }
-  .btn-ghost:hover { background: var(--bg-card); color: var(--text); border-color: #404040; }
-  .btn-lg { padding: 16px 32px; font-size: 16px; border-radius: var(--radius-lg); }
-  .btn-sm { padding: 9px 16px; font-size: 14px; }
+  .btn-ghost:hover { background: var(--bg-soft); color: var(--text); border-color: var(--text); }
+  .btn-lg { padding: 16px 32px; font-size: 15px; border-radius: var(--radius-lg); }
+  .btn-sm { padding: 9px 18px; font-size: 13px; }
 
   .menu-toggle {
     display: none; background: none; border: none;
     color: var(--text); font-size: 24px; cursor: pointer; padding: 4px 8px;
   }
 
+  /* ===== HERO ===== */
   .hero { padding: 140px 0 100px; position: relative; overflow: hidden; }
   .hero::before {
     content: ''; position: absolute;
-    top: -200px; left: 50%; transform: translateX(-50%);
-    width: 800px; height: 800px;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+    top: -300px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(212, 101, 58, 0.08) 0%, transparent 70%);
     pointer-events: none;
   }
   .hero-inner {
@@ -115,23 +127,23 @@
   }
   .badge {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 14px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 7px 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     border-radius: 999px;
-    font-size: 13px; color: var(--accent); font-weight: 500;
+    font-size: 13px; color: var(--text-dim); font-weight: 500;
     margin-bottom: 24px;
   }
   h1 {
     font-family: var(--font-display);
-    font-size: clamp(34px, 5vw, 56px);
-    line-height: 1.1; font-weight: 700;
-    letter-spacing: -1px; margin-bottom: 24px;
+    font-size: clamp(30px, 4.5vw, 52px);
+    line-height: 1.15; font-weight: 600;
+    letter-spacing: -1.5px; margin-bottom: 24px;
   }
   h1 .accent { color: var(--accent); }
   .hero-sub {
-    font-size: 19px; color: var(--text-dim);
-    margin-bottom: 36px; max-width: 540px; line-height: 1.55;
+    font-size: 18px; color: var(--text-dim);
+    margin-bottom: 36px; max-width: 520px; line-height: 1.6;
   }
   .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
   .hero-logo { display: grid; place-items: center; }
@@ -139,38 +151,29 @@
     width: 100%; max-width: 340px; aspect-ratio: 1;
     background: var(--bg-soft);
     border: 1px solid var(--border);
-    border-radius: 28px;
+    border-radius: 32px;
     display: grid; place-items: center;
+    box-shadow: var(--shadow-lg);
     position: relative;
-  }
-  .hero-logo-mark::after {
-    content: ''; position: absolute; inset: -1px;
-    border-radius: 28px;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), transparent 50%);
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    padding: 1px; pointer-events: none;
   }
   .hero-logo-letter {
     font-family: var(--font-display);
-    font-weight: 700; font-size: clamp(120px, 20vw, 200px);
-    color: #fff; letter-spacing: -8px; line-height: 1;
-    position: relative;
+    font-weight: 700; font-size: clamp(110px, 18vw, 180px);
+    color: var(--text); letter-spacing: -8px; line-height: 1;
   }
   .hero-logo-letter::after {
     content: ''; position: absolute;
-    right: -8%; bottom: 12%;
-    width: 22%; aspect-ratio: 1;
+    right: 14%; bottom: 18%;
+    width: 18%; aspect-ratio: 1;
     background: var(--accent); border-radius: 50%;
   }
 
+  /* ===== СЕКЦИИ ===== */
   section { padding: 90px 0; }
   .section-title {
     font-family: var(--font-display);
-    font-size: clamp(28px, 3.5vw, 42px);
-    font-weight: 700; letter-spacing: -0.5px;
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 600; letter-spacing: -1px;
     margin-bottom: 16px; text-align: center;
   }
   .section-sub {
@@ -179,85 +182,103 @@
     margin: 0 auto 60px;
   }
 
+  /* ===== ШАГИ ===== */
   .steps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 20px;
   }
   .step {
-    background: var(--bg-soft);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 28px 22px; text-align: center;
-    transition: transform 0.2s, border-color 0.2s;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .step:hover { transform: translateY(-4px); border-color: rgba(212, 175, 55, 0.4); }
+  .step:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
   .step-num {
     display: inline-flex; width: 32px; height: 32px;
     background: var(--accent-soft); color: var(--accent);
-    border-radius: 50%; font-size: 14px; font-weight: 700;
+    border-radius: 50%; font-size: 13px; font-weight: 700;
     align-items: center; justify-content: center;
     margin-bottom: 14px;
+    font-family: var(--font-display);
   }
   .step-icon { font-size: 32px; margin-bottom: 12px; display: block; }
-  .step-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .step-title {
+    font-family: var(--font-display);
+    font-weight: 500; font-size: 14px;
+    margin-bottom: 6px; letter-spacing: -0.3px;
+  }
   .step-desc { font-size: 13px; color: var(--text-mute); line-height: 1.5; }
 
+  /* ===== ФИЧИ ===== */
   .features {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 18px;
   }
   .feature {
-    background: var(--bg-soft);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 28px;
-    transition: border-color 0.2s;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .feature:hover { border-color: rgba(212, 175, 55, 0.35); }
+  .feature:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
   .feature-icon { font-size: 28px; margin-bottom: 16px; display: block; }
-  .feature-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+  .feature-title {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 500;
+    margin-bottom: 8px; letter-spacing: -0.3px;
+  }
   .feature-desc { font-size: 14px; color: var(--text-dim); line-height: 1.55; }
 
+  /* ===== ТАРИФЫ ===== */
   .pricing {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 18px; margin-top: 20px;
   }
   .price-card {
-    background: var(--bg-soft);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 32px 26px;
     display: flex; flex-direction: column;
     position: relative;
-    transition: transform 0.2s, border-color 0.2s;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
-  .price-card:hover { transform: translateY(-4px); border-color: rgba(212, 175, 55, 0.4); }
+  .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
   .price-card.featured {
     border-color: var(--accent);
-    background: linear-gradient(180deg, rgba(212, 175, 55, 0.06), var(--bg-soft));
+    border-width: 2px;
+    background: linear-gradient(180deg, rgba(212, 101, 58, 0.04), var(--bg-card));
   }
   .price-tag {
     position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: var(--accent); color: #0a0a0a;
-    font-size: 11px; font-weight: 700;
+    background: var(--accent); color: #fff;
+    font-family: var(--font-display);
+    font-size: 10px; font-weight: 600;
     padding: 5px 12px; border-radius: 999px;
     letter-spacing: 0.5px; text-transform: uppercase;
   }
   .price-name {
-    font-size: 14px; color: var(--text-dim);
+    font-family: var(--font-display);
+    font-size: 13px; color: var(--text-mute);
     text-transform: uppercase; letter-spacing: 1px;
-    margin-bottom: 14px;
+    margin-bottom: 14px; font-weight: 500;
   }
   .price-amount {
     font-family: var(--font-display);
-    font-size: 42px; font-weight: 700;
-    letter-spacing: -1px; line-height: 1;
+    font-size: 38px; font-weight: 700;
+    letter-spacing: -1.5px; line-height: 1;
     margin-bottom: 8px;
   }
-  .price-amount .currency { font-size: 24px; color: var(--text-dim); }
+  .price-amount .currency { font-size: 22px; color: var(--text-mute); }
   .price-note { font-size: 13px; color: var(--text-mute); margin-bottom: 24px; min-height: 20px; }
   .price-note .save { color: var(--accent); font-weight: 600; }
   .price-features { list-style: none; margin-bottom: 28px; flex: 1; }
@@ -274,18 +295,23 @@
     color: var(--text-mute); margin-top: 32px; line-height: 1.7;
   }
 
+  /* ===== FAQ ===== */
   .faq-list { max-width: 760px; margin: 0 auto; }
   details {
-    background: var(--bg-soft);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 0; margin-bottom: 12px;
-    overflow: hidden; transition: border-color 0.2s;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s;
   }
-  details[open] { border-color: rgba(212, 175, 55, 0.35); }
+  details[open] { border-color: var(--accent); }
   summary {
     cursor: pointer; padding: 20px 24px;
-    font-weight: 600; font-size: 16px;
+    font-family: var(--font-display);
+    font-weight: 500; font-size: 15px;
+    letter-spacing: -0.3px;
     display: flex; justify-content: space-between; align-items: center;
     list-style: none; user-select: none;
   }
@@ -301,9 +327,10 @@
     color: var(--text-dim); font-size: 15px; line-height: 1.65;
   }
 
+  /* ===== CTA ===== */
   .cta-final {
-    background: var(--bg-soft);
-    border: 1px solid var(--border);
+    background: var(--text);
+    color: var(--bg);
     border-radius: var(--radius-lg);
     padding: 60px 40px; text-align: center;
     position: relative; overflow: hidden;
@@ -312,22 +339,28 @@
     content: ''; position: absolute;
     top: -100px; left: 50%; transform: translateX(-50%);
     width: 600px; height: 400px;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.1), transparent 70%);
+    background: radial-gradient(circle, rgba(212, 101, 58, 0.3), transparent 70%);
     pointer-events: none;
   }
   .cta-final > * { position: relative; }
   .cta-final h2 {
     font-family: var(--font-display);
-    font-size: clamp(26px, 3.5vw, 36px);
-    font-weight: 700; letter-spacing: -0.5px;
-    margin-bottom: 14px;
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 600; letter-spacing: -1px;
+    margin-bottom: 14px; color: var(--bg);
   }
   .cta-final p {
-    color: var(--text-dim); font-size: 17px;
+    color: rgba(245, 241, 234, 0.7);
+    font-size: 17px;
     margin-bottom: 30px; max-width: 520px;
     margin-left: auto; margin-right: auto;
   }
+  .cta-final .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
 
+  /* ===== FOOTER ===== */
   footer {
     border-top: 1px solid var(--border);
     padding: 40px 0 32px;
@@ -341,6 +374,7 @@
   .footer-links a { color: var(--text-mute); }
   .footer-links a:hover { color: var(--text); }
 
+  /* ===== АДАПТИВ ===== */
   @media (max-width: 900px) {
     .hero-inner { grid-template-columns: 1fr; gap: 40px; }
     .hero-logo { order: -1; }
@@ -349,11 +383,12 @@
     .nav-links.open {
       display: flex; position: absolute;
       top: 100%; left: 0; right: 0;
-      background: var(--bg-soft);
+      background: var(--bg);
       flex-direction: column;
       padding: 20px 24px;
       border-bottom: 1px solid var(--border);
       gap: 16px;
+      box-shadow: var(--shadow-lg);
     }
     .menu-toggle { display: block; }
     .nav .btn-primary { display: none; }
@@ -363,7 +398,7 @@
     section { padding: 60px 0; }
     .container { padding: 0 18px; }
     .cta-final { padding: 44px 24px; }
-    .price-amount { font-size: 36px; }
+    .price-amount { font-size: 32px; }
     .hero-cta { flex-direction: column; }
     .hero-cta .btn { width: 100%; }
   }
@@ -393,7 +428,7 @@
 <section class="hero">
   <div class="container hero-inner">
     <div>
-      <span class="badge">✨ AI-ценообразование для посуточной аренды</span>
+      <span class="badge">AI-ценообразование для посуточной аренды</span>
       <h1>Узнайте, по какой цене <span class="accent">сдавать квартиру</span> в Москве</h1>
       <p class="hero-sub">
         Lodgic анализирует реальные цены Avito, учитывает 10 факторов и за 2 секунды
@@ -401,7 +436,7 @@
       </p>
       <div class="hero-cta">
         <a href="https://t.me/LodgicBot" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
-          🤖 Открыть в Telegram
+          Открыть в Telegram
         </a>
         <a href="#pricing" class="btn btn-ghost btn-lg">Посмотреть тарифы</a>
       </div>
@@ -613,7 +648,7 @@
       <h2>Готовы узнать свою цену?</h2>
       <p>Первые 3 оценки — бесплатно. Без регистрации, без карты, за 2 секунды.</p>
       <a href="https://t.me/LodgicBot" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
-        🤖 Открыть в Telegram
+        Открыть в Telegram
       </a>
     </div>
   </div>
@@ -622,11 +657,11 @@
 <footer>
   <div class="container footer-inner">
     <div>
-      <div class="logo" style="font-size: 18px; margin-bottom: 8px;">
-        <span class="logo-mark" style="width: 28px; height: 28px; font-size: 14px;">LG</span>
+      <div class="logo" style="font-size: 16px; margin-bottom: 8px;">
+        <span class="logo-mark" style="width: 28px; height: 28px; font-size: 13px;">LG</span>
         <span>Lodgic</span>
       </div>
-      <div>© 2025 Lodgic. Умное ценообразование для посуточной аренды.</div>
+      <div>© <span id="year"></span> Lodgic. Умное ценообразование для посуточной аренды.</div>
     </div>
     <div class="footer-links">
       <a href="offer.html">Оферта</a>
@@ -637,6 +672,9 @@
 </footer>
 
 <script>
+  // Автообновление года
+  document.getElementById('year').textContent = new Date().getFullYear();
+
   // Мобильное меню
   const menuToggle = document.getElementById('menuToggle');
   const navLinks = document.getElementById('navLinks');
@@ -644,7 +682,6 @@
     menuToggle.addEventListener('click', () => {
       navLinks.classList.toggle('open');
     });
-    // Закрывать меню при клике на ссылку
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => navLinks.classList.remove('open'));
     });
